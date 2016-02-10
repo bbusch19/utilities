@@ -68,19 +68,49 @@ var _ = { };
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, iterator) {
+    var newArray = [];
+    for (var i = 0; i < collection.length; i ++) {
+      if(iterator(collection[i])) {
+        newArray.push(collection[i]);
+      }
+    }
+    return newArray;
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, iterator) {
+    var newArray = [];
+    for (var i = 0; i < collection.length; i++) {
+      if (iterator(collection[i])) {
+        continue;
+      } else {
+        newArray.push(collection[i]);
+      }
+    }
+    return newArray;
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
+    var obj = {};
+     for (var i = 0; i < array.length; i++) {
+         obj[array[i]] = true;
+     }
+     array = [];
+     for (var key in obj) {
+         array.push(key);
+     }
+     return array;
   };
 
 
   // Return the results of applying an iterator to each element.
   _.map = function(array, iterator) {
+    var newArray = [];
+    for (var i = 0; i < array.length; i++) {
+      newArray.push(iterator(array[i]));
+    }
+    return newArray;
   };
 
   // Takes an array of objects and returns and array of the values of
