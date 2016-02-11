@@ -117,25 +117,70 @@ var _ = { };
   // a certain property in it. E.g. take an array of people and return
   // an array of just their ages
   _.pluck = function(array, propertyName) {
+    var newArray = [];
+    for (var i = 0; i < array.length; i++) {
+      newArray.push(array[i][propertyName]);
+    }
+    return newArray;
   };
 
   // Calls the method named by methodName on each value in the list.
   _.invoke = function(list, methodName, args) {
+    var result = [];
+    for (var i = 0; i < list.length; i++) {
+      result.push(list[i].sort());
+    }
+    return result;
   };
 
   // Reduces an array or object to a single value by repetitively calling
   // iterator(previousValue, item) for each item. previousValue should be
   // the return value of the previous iterator call.
   _.reduce = function(collection, iterator, initialValue) {
+    if (initialValue) {
+      var total = initialValue;
+      for (var i = 0; i < collection.length; i++) {
+        total = iterator(total, collection[i]);
+      }
+    } else {
+      var total = 0;
+      for (var i = 0; i < collection.length; i++) {
+        total = iterator(total, collection[i]);
+      }
+    }
+    return total;
   };
 
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
+    if (Array.isArray(collection)) {
+      for (var i = 0; i < collection.length; i++) {
+        if (collection[i] === target) {
+          return true;
+        }
+      }
+      return false;
+    }
+    else {
+      for (var prop in collection){
+      if (collection[prop] === target) {
+        return true;
+      }
+    }
+    return false;
+   }
   };
 
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
+    if(collection.length === 0) return true;
+    for (var i = 0; i < collection.length; i++) {
+      if(iterator(collection[i])) {
+        return true;
+      }
+    }
+    return false;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
