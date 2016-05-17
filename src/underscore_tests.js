@@ -212,16 +212,27 @@ var _ = { };
   // Extend a given object with all the properties of the passed in
   // object(s).
   _.extend = function(obj) {
-      for (var prop in obj) {
-          if (obj.hasOwnProperty(prop)) {
-              this[prop] = obj[prop];
+      for (var i = 1; i < arguments.length; i++) {
+          var extendObj = arguments[0];
+          for (var prop in arguments[i]) {
+              extendObj[prop] = arguments[i][prop]
           }
       }
+      return extendObj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+      for (var i = 1; i < arguments.length; i++) {
+          var extendObj = arguments[0];
+          for (var prop in arguments[i]) {
+              if (!extendObj.hasOwnProperty(prop)) {
+                  extendObj[prop] = arguments[i][prop];
+              }
+          }
+      }
+      return extendObj;
   };
 
 
@@ -233,6 +244,17 @@ var _ = { };
   // Return a function that can be called at most one time. Subsequent calls
   // should return the previously returned value.
   _.once = function(func) {
+      var called = false
+      var ret;
+       return function() {
+           if (!called) {
+               ret = func();
+               called = true;
+               return ret;
+           } else {
+               return ret;
+           }
+      }
   };
 
   // Memoize an expensive function by storing its results. You may assume
@@ -242,6 +264,15 @@ var _ = { };
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+      var results = {};
+      return function(args) {
+          if (results.hasOwnProperty(args)) {
+              return results[args];
+          } else {
+              results[args] = func(args);
+              return results[args];
+          }
+      }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -251,20 +282,44 @@ var _ = { };
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+      var arg1 = arguments[2];
+      var arg2 = arguments[3];
+      setTimeout(function() {
+          return func(arg1, arg2);
+      }, wait);
   };
 
 
 
   // Shuffle an array.
   _.shuffle = function(array) {
+      var newArray = [];
+      for (var i = 0; i < array.length; i++) {
+          newArray.push(array[Math.floor(Math.random() * array.length)]);
+      }
+      return newArray;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
   // If iterator is a string, sort objects by that property with the name
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
-  _.sortBy = function(collection, iterator) {
-  };
+  _.sortBy = function(co, it) {
+    if (typeof co[0] === 'object') {
+        return co.sort(it);
+    }
+    if (typeof it === 'string') {
+        return co.sort(function(a, b) {
+            return a[it] > b[it];
+        });
+    } else {
+        for (var key in co) {
+            return co.sort(function(a, b) {
+                return a > b;
+            });
+        }
+    }
+};
 
   // Zip together two or more arrays with elements of the same index
   // going together.
@@ -272,21 +327,73 @@ var _ = { };
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+      var ret = [];
+      var args = arguments;
+      for (var i = 0; i < args[0].length; i++) {
+          ret.push([args[0][i]]);
+      }
+      for (var j = 1; j < args.length; j++) {
+          for (var k = 0; k < ret.length; k++) {
+              if (k < args[j].length) {
+                  ret[k].push(args[j][k]);
+              } else {
+                  ret[k].push(undefined);
+              }
+          }
+      }
+      return ret;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
   // The new array should contain all elements of the multidimensional array.
-  _.flatten = function(nestedArray, result) {
+  _.flatten = function(arr) {
+      var ret = [];
+      var arrTest = false;
+      for (var i = 0; i < arr.length; i++) {
+          ret = ret.concat(arr[i]);
+          if (typeof arr[i] === 'object') {
+              arrTest = true;
+          }
+      }
+      return arrTest ? _.flatten(ret) : ret;
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+      var arg = arguments;
+      var ret = [];
+      for (var i = 0; i < arg[0].length; i++) {
+          var found = false;
+          for (var j = 1; j < arg.length; j++) {
+              if (arg[j].indexOf(arg[0][i]) !== -1) {
+                  found = true;
+              }
+          }
+          if (found) {
+              ret.push(arg[0][i]);
+          }
+      }
+      return ret;
   };
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
+      var arg = arguments;
+      var ret = [];
+      for (var i = 0; i < arg[0].length; i++) {
+          var found = false;
+          for (var j = 1; j < arg.length; j++) {
+              if (arg[j].indexOf(arg[0][i]) !== -1) {
+                  found = true;
+              }
+          }
+          if (!found) {
+              ret.push(arg[0][i]);
+          }
+      }
+      return ret;
   };
 
 }).call(this);
