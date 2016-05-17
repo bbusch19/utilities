@@ -175,17 +175,30 @@ var _ = { };
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     if(collection.length === 0) return true;
+    if(!iterator) return true;
     for (var i = 0; i < collection.length; i++) {
-      if(iterator(collection[i])) {
-        return true;
+      if(!iterator(collection[i])) {
+        return false;
       }
     }
-    return false;
+    return true;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
+      if(collection.length === 0) return false;
+      if(iterator) {
+          for (var i = 0; i < collection.length; i++) {
+              if (iterator(collection[i])) return true;
+          }
+      }
+      else if (!iterator) {
+          for (var i = 0; i < collection.length; i++) {
+              if (collection[i]) return true;
+          }
+      }
+      return false;
   };
 
 
@@ -199,6 +212,11 @@ var _ = { };
   // Extend a given object with all the properties of the passed in
   // object(s).
   _.extend = function(obj) {
+      for (var prop in obj) {
+          if (obj.hasOwnProperty(prop)) {
+              this[prop] = obj[prop];
+          }
+      }
   };
 
   // Like extend, but doesn't ever overwrite a key that already
